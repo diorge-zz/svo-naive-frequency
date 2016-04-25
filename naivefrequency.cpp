@@ -53,6 +53,8 @@ int main(int argc, char** argv) {
                                           data.first.second, data.second));
    }
 
+   n = std::min(n, (int)ordered.size());
+
    std::partial_sort(ordered.begin(), ordered.begin() + n,
                      ordered.end(), compareTuples);
 
