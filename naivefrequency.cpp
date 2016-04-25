@@ -18,9 +18,12 @@ struct SvoRow {
 struct hashPair {
    template <class T1, class T2>
    std::size_t operator () (const std::pair<T1, T2> &p) const {
+      auto value = 0x345678;
       auto h1 = std::hash<T1>{}(p.first);
       auto h2 = std::hash<T2>{}(p.second);
-      return h1 ^ h2;
+      value = (100003 * value) ^ h1;
+      value = (100003 * value) ^ h2;
+      return value;
    }
 };
 
