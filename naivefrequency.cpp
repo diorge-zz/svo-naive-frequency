@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <unordered_map>
 #include <utility>
@@ -31,8 +30,6 @@ bool compareTuples(std::tuple<std::string, std::string, int> a,
 
 
 int main(int argc, char** argv) {
-   std::ifstream input("sample.svo");
-
    if (argc < 2) {
       std::cout << "Unspecified N value" << std::endl;
       return -1;
@@ -44,7 +41,7 @@ int main(int argc, char** argv) {
    std::unordered_map<std::pair<std::string, std::string>, int, hashPair> pairs;
    std::vector<std::tuple<std::string, std::string, int> > ordered;
 
-   while (input >> row.s >> row.v >> row.o >> row.n) {
+   while (std::cin >> row.s >> row.v >> row.o >> row.n) {
       pairs[std::make_pair(row.s, row.o)] += row.n;
    }
 
