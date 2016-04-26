@@ -1,9 +1,14 @@
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <unordered_map>
 #include <utility>
 #include <algorithm>
+#include <sstream>
+#include <vector>
+
+
+typedef std::pair<std::string, std::string> TKey;
+typedef std::pair<TKey, int> TPair;
 
 
 struct SvoRow {
@@ -17,49 +22,51 @@ struct SvoRow {
 struct hashPair {
    template <class T1, class T2>
    std::size_t operator () (const std::pair<T1, T2> &p) const {
+      auto value = 0x345678;
       auto h1 = std::hash<T1>{}(p.first);
       auto h2 = std::hash<T2>{}(p.second);
-      return h1 ^ h2;
+      value = (100003 * value) ^ h1;
+      value = (100003 * value) ^ h2;
+      return value;
    }
 };
 
 
-bool compareTuples(std::tuple<std::string, std::string, int> a,
-                     std::tuple<std::string, std::string, int> b) {
-   return std::get<2>(a) > std::get<2>(b);
+bool compareTuples(TPair a, TPair b) {
+   return a.second > b.second;
 }
 
 
 int main(int argc, char** argv) {
-   std::ifstream input("sample.svo");
-
    if (argc < 2) {
       std::cout << "Unspecified N value" << std::endl;
       return -1;
    }
 
 
-   int n = std::stoi(argv[1]);
-   SvoRow row;
-   std::unordered_map<std::pair<std::string, std::string>, int, hashPair> pairs;
-   std::vector<std::tuple<std::string, std::string, int> > ordered;
+   std::unordered_map<TKey, int, hashPair> pairs;
 
-   while (input >> row.s >> row.v >> row.o >> row.n) {
+   while (std::cin.peek() != std::char_traits<char>::eof()) {
+      SvoRow row;
+      std::getline(std::cin, row.s, '\t');
+      std::getline(std::cin, row.v, '\t');
+      std::getline(std::cin, row.o, '\t');
+      std::string tempString;
+      std::getline(std::cin, tempString);
+      row.n = std::stoi(tempString);
       pairs[std::make_pair(row.s, row.o)] += row.n;
    }
 
-   for (const auto &data : pairs) {
-      ordered.push_back(std::make_tuple(data.first.first,
-                                          data.first.second, data.second));
-   }
+   int n = std::stoi(argv[1]);
+   n = std::min(n, (int)pairs.size());
+   std::vector<TPair> ordered;
+   ordered.resize(n);
 
-   n = std::min(n, (int)ordered.size());
+   std::partial_sort_copy(pairs.begin(), pairs.end(),
+                     ordered.begin(), ordered.end(), compareTuples);
 
-   std::partial_sort(ordered.begin(), ordered.begin() + n,
-                     ordered.end(), compareTuples);
-
-   for (auto it = ordered.begin(); it != ordered.begin() + n; ++it) {
-      std::cout << "(" << std::get<0>(*it) << ", " << std::get<1>(*it)
-                  << ") = " << std::get<2>(*it) << "\n";
+   for (auto &elem : ordered) {
+      std::cout << "(" << elem.first.first << ", " << elem.first.second
+                  << ") = " << elem.second << "\n";
    }
 }
