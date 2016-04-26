@@ -72,12 +72,16 @@ int main(int argc, char** argv) {
    SvoRow row;
    std::unordered_map<std::pair<std::string, std::string>, int, hashPair> pairs;
    std::vector<std::tuple<std::string, std::string, int> > ordered;
-   std::string line;
+   std::string tempString;
 
-   while (std::getline(std::cin, line)) {
-      std::vector<std::string> elems = split(line, '\t');
-      row = rowFromSplit(elems);
+   while (std::cin.good()) {
+      std::getline(std::cin, row.s, '\t');
+      std::getline(std::cin, row.v, '\t');
+      std::getline(std::cin, row.o, '\t');
+      std::getline(std::cin, tempString);
+      row.n = std::stoi(tempString);
       pairs[std::make_pair(row.s, row.o)] += row.n;
+      std::cin.peek();
    }
 
    for (const auto &data : pairs) {
