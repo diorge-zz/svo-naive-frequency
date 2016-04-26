@@ -7,6 +7,10 @@
 #include <vector>
 
 
+typedef std::pair<std::string, std::string> TKey;
+typedef std::pair<TKey, int> TPair;
+
+
 struct SvoRow {
    std::string s;
    std::string v;
@@ -28,9 +32,8 @@ struct hashPair {
 };
 
 
-bool compareTuples(std::tuple<std::string, std::string, int> a,
-                     std::tuple<std::string, std::string, int> b) {
-   return std::get<2>(a) > std::get<2>(b);
+bool compareTuples(TPair a, TPair b) {
+   return a.second > b.second;
 }
 
 
@@ -41,33 +44,29 @@ int main(int argc, char** argv) {
    }
 
 
-   int n = std::stoi(argv[1]);
-   SvoRow row;
-   std::unordered_map<std::pair<std::string, std::string>, int, hashPair> pairs;
-   std::vector<std::tuple<std::string, std::string, int> > ordered;
-   std::string tempString;
+   std::unordered_map<TKey, int, hashPair> pairs;
 
    while (std::cin.peek() != std::char_traits<char>::eof()) {
+      SvoRow row;
       std::getline(std::cin, row.s, '\t');
       std::getline(std::cin, row.v, '\t');
       std::getline(std::cin, row.o, '\t');
+      std::string tempString;
       std::getline(std::cin, tempString);
       row.n = std::stoi(tempString);
       pairs[std::make_pair(row.s, row.o)] += row.n;
    }
 
-   for (const auto &data : pairs) {
-      ordered.push_back(std::make_tuple(data.first.first,
-                                          data.first.second, data.second));
-   }
+   int n = std::stoi(argv[1]);
+   n = std::min(n, (int)pairs.size());
+   std::vector<TPair> ordered;
+   ordered.resize(n);
 
-   n = std::min(n, (int)ordered.size());
+   std::partial_sort_copy(pairs.begin(), pairs.end(),
+                     ordered.begin(), ordered.end(), compareTuples);
 
-   std::partial_sort(ordered.begin(), ordered.begin() + n,
-                     ordered.end(), compareTuples);
-
-   for (auto it = ordered.begin(); it != ordered.begin() + n; ++it) {
-      std::cout << "(" << std::get<0>(*it) << ", " << std::get<1>(*it)
-                  << ") = " << std::get<2>(*it) << "\n";
+   for (auto &elem : ordered) {
+      std::cout << "(" << elem.first.first << ", " << elem.first.second
+                  << ") = " << elem.second << "\n";
    }
 }
