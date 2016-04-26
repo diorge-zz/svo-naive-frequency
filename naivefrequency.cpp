@@ -47,14 +47,13 @@ int main(int argc, char** argv) {
    std::vector<std::tuple<std::string, std::string, int> > ordered;
    std::string tempString;
 
-   while (std::cin.good()) {
+   while (std::cin.peek() != std::char_traits<char>::eof()) {
       std::getline(std::cin, row.s, '\t');
       std::getline(std::cin, row.v, '\t');
       std::getline(std::cin, row.o, '\t');
       std::getline(std::cin, tempString);
       row.n = std::stoi(tempString);
       pairs[std::make_pair(row.s, row.o)] += row.n;
-      std::cin.peek();
    }
 
    for (const auto &data : pairs) {
