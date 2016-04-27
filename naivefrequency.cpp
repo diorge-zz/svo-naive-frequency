@@ -91,6 +91,7 @@ int main(int argc, char** argv) {
 
 
    std::unordered_map<TKey, int, hashPair> pairs;
+   std::ios_base::sync_with_stdio(false);
 
    while (std::cin.peek() != std::char_traits<char>::eof()) {
       SvoRow row;
