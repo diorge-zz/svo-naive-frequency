@@ -3,7 +3,7 @@ CXXFLAGS=-std=c++11 -Wall -pedantic
 RM=rm -f
 
 SRC=naivefrequency.cpp
-OBJ=naivefrequency
+OBJ=bin/naivefrequency
 
 naivefrequency:
 	$(CXX) $(CXXFLAGS) -O3 -o $(OBJ) $(SRC)

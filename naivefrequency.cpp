@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <sstream>
 #include <vector>
+#include <stdexcept>
 
 
 /*! \var    typedef std::pair<std::string, std::string> TKey
@@ -54,6 +55,13 @@ bool compareTuples(TPair a, TPair b) {
 }
 
 
+//! Prints usage message
+void usage(const char* progName) {
+      std::cerr << "usage: " << progName << " pairCount\n"
+                << "\tpairCount: amount of top frequent pairs to search (positive integer)\n";
+}
+
+
 //! SVO{N} frequency counter program
 /*! 
  * \param argc Must be at least 2
@@ -62,7 +70,22 @@ bool compareTuples(TPair a, TPair b) {
 */
 int main(int argc, char** argv) {
    if (argc < 2) {
-      std::cout << "Unspecified N value" << std::endl;
+      usage(argv[0]);
+      return -1;
+   }
+
+   int pairCount;
+   try {
+      pairCount = std::stoi(argv[1]);
+      if (pairCount <= 0) {
+         usage(argv[0]);
+         return -1;
+      }
+   } catch (const std::invalid_argument& ia) {
+      usage(argv[0]);
+      return -1;
+   } catch (const std::out_of_range& oor) {
+      usage(argv[0]);
       return -1;
    }
 
@@ -80,10 +103,9 @@ int main(int argc, char** argv) {
       pairs[std::make_pair(row.s, row.o)] += row.n;
    }
 
-   int n = std::stoi(argv[1]);
-   n = std::min(n, (int)pairs.size());
+   pairCount = std::min(pairCount, (int)pairs.size());
    std::vector<TPair> ordered;
-   ordered.resize(n);
+   ordered.resize(pairCount);
 
    std::partial_sort_copy(pairs.begin(), pairs.end(),
                      ordered.begin(), ordered.end(), compareTuples);
