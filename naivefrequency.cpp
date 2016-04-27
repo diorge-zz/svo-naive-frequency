@@ -57,8 +57,8 @@ bool compareTuples(TPair a, TPair b) {
 
 //! Prints usage message
 void usage(const char* progName) {
-      std::cerr << "usage: " << progName << " k\n"
-                << "\tk: amount of top frequent pairs to search (positive integer)\n";
+      std::cerr << "usage: " << progName << " pairCount\n"
+                << "\tpairCount: amount of top frequent pairs to search (positive integer)\n";
 }
 
 
@@ -74,10 +74,10 @@ int main(int argc, char** argv) {
       return -1;
    }
 
-   int n;
+   int pairCount;
    try {
-      n = std::stoi(argv[1]);
-      if (n <= 0) {
+      pairCount = std::stoi(argv[1]);
+      if (pairCount <= 0) {
          usage(argv[0]);
          return -1;
       }
@@ -103,9 +103,9 @@ int main(int argc, char** argv) {
       pairs[std::make_pair(row.s, row.o)] += row.n;
    }
 
-   n = std::min(n, (int)pairs.size());
+   pairCount = std::min(pairCount, (int)pairs.size());
    std::vector<TPair> ordered;
-   ordered.resize(n);
+   ordered.resize(pairCount);
 
    std::partial_sort_copy(pairs.begin(), pairs.end(),
                      ordered.begin(), ordered.end(), compareTuples);
