@@ -26,7 +26,10 @@
 *.exe
 *.out
 *.app
-naivefrequency
 
 # Text editor
 *.swp
+
+# Directories
+bin/
+doc/

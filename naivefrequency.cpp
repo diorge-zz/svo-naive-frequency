@@ -1,3 +1,11 @@
+/*!
+ * \file        naivefrequency.cpp
+ * \brief       Program for frequency count of SVO{N} files.
+ * \author      Diorge Brognara
+ * \date        2016
+ * \copyright   Copyright (C) Diorge Brognara 2016. All rights MIT Licensed.
+*/
+
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -7,10 +15,17 @@
 #include <vector>
 
 
+/*! \var    typedef std::pair<std::string, std::string> TKey
+ *  \brief  (S, O) key used in the mapping
+*/
 typedef std::pair<std::string, std::string> TKey;
+
+/*! \var    typedef std::pair<TKey, int> TPair
+    \brief  type_value used in the mapping
+*/
 typedef std::pair<TKey, int> TPair;
 
-
+//! Data in each row in the SVO{N} file
 struct SvoRow {
    std::string s;
    std::string v;
@@ -19,6 +34,7 @@ struct SvoRow {
 };
 
 
+//! Definition of custom hash for std::pair<T1, T2>
 struct hashPair {
    template <class T1, class T2>
    std::size_t operator () (const std::pair<T1, T2> &p) const {
@@ -32,11 +48,18 @@ struct hashPair {
 };
 
 
+//! Compares two TPair by greater integer value
 bool compareTuples(TPair a, TPair b) {
    return a.second > b.second;
 }
 
 
+//! SVO{N} frequency counter program
+/*! 
+ * \param argc Must be at least 2
+ * \param argv Second element (first argument) must be a positive integer, other elements are discarded
+ SVO input is expected on stdin. Output is on stdout.
+*/
 int main(int argc, char** argv) {
    if (argc < 2) {
       std::cout << "Unspecified N value" << std::endl;
